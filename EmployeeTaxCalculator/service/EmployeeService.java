@@ -21,29 +21,27 @@ public class EmployeeService {
 
 
     public List<EmployeeTax> getAllEmployeesTax() {
-        List<EmployeeDetails> employees = new ArrayList<EmployeeDetails>();
         List<EmployeeTax> employeeTaxes = new ArrayList<>();
-        employeeRepository.findAll().forEach(employee -> employees.add(employee));
-        Double totalSalary = 0.0;
-        Double taxSalary = 0.0;
-        double totalTax = 0.0;
-        double temp = 0.0;
-        double montlySalary = 0.0;
-        Calendar c = Calendar.getInstance();
-        c.set(Calendar.MONTH, 04);
 
-        // set Date
-        c.set(Calendar.DATE, 01);
-
-        // set Year
-        c.set(Calendar.YEAR, 2020);
-
-        Date dateOne = c.getTime();
-
-        for (int i = 0; i < employees.size(); i++) {
+        employeeRepository.findAll().forEach(employee -> {
             EmployeeTax employeeTax = new EmployeeTax();
+            Double totalSalary = 0.0;
+            Double taxSalary = 0.0;
+            double totalTax = 0.0;
+            double temp = 0.0;
+            double montlySalary = 0.0;
+            Calendar c = Calendar.getInstance();
+            c.set(Calendar.MONTH, 04);
 
-            taxSalary = employees.get(i).getSalary();
+            // set Date
+            c.set(Calendar.DATE, 01);
+
+            // set Year
+            c.set(Calendar.YEAR, 2020);
+
+            Date dateOne = c.getTime();
+
+            taxSalary = employee.getSalary();
 
             if ((taxSalary > 0) && (taxSalary > 250000) && (taxSalary <= 500000)) {
                 totalTax += taxSalary * 0.05;
@@ -57,24 +55,23 @@ public class EmployeeService {
                 totalTax += taxSalary * 0.2;
             }
 
-            employeeTax.setYearlySalary((employees.get(i).getSalary() * 12) - totalTax);
+            employeeTax.setYearlySalary((employee.getSalary() * 12) - totalTax);
 
             employeeTax.setTaxAmount(totalTax);
-            employeeTax.setEmployeeCode(employees.get(i).getEmployeeId());
-            employeeTax.setFirstName(employees.get(i).getFirstName());
-            employeeTax.setLastName(employees.get(i).getLastName());
-            employeeTax.setCessAmount(0.0);//default
+            employeeTax.setEmployeeCode(employee.getEmployeeId());
+            employeeTax.setFirstName(employee.getFirstName());
+            employeeTax.setLastName(employee.getLastName());
+            employeeTax.setCessAmount(0.0);
 
             //calculate
-            totalSalary = employees.get(i).getSalary();
+            totalSalary = employee.getSalary();
             montlySalary = totalSalary / 12;
             if (taxSalary > 2500000) {
                 employeeTax.setCessAmount((300000) * 0.02);
             }
-            if (employees.get(i).getDoj().before(dateOne)) {
-                int da = employees.get(i).getDoj().getDate();
-                int mo = employees.get(i).getDoj().getMonth();
-                System.out.println("da" + da);
+            if (employee.getDoj().before(dateOne)) {
+                int da = employee.getDoj().getDate();
+                int mo = employee.getDoj().getMonth();
                 for (int j = mo + 1; j <= 12; j++) {
                     temp += montlySalary;
                 }
@@ -87,7 +84,7 @@ public class EmployeeService {
             }
 
             employeeTaxes.add(employeeTax);
-        }
+        });
 
         return employeeTaxes;
     }
@@ -99,15 +96,7 @@ public class EmployeeService {
     }
 
     public void saveOrUpdate(EmployeeDetails employee) {
-        if ((employee.getEmployeeId() != null) &&
-                (employee.getEmail() != null) &&
-                (employee.getDoj() != null) &&
-                (employee.getFirstName() != null) &&
-                (employee.getLastName() != null) &&
-                (employee.getSalary() != null) &&
-                (employee.getPhoneNumber() != null)
-        )
-             employeeRepository.save(employee);
+        employeeRepository.save(employee);
 
     }
 
